@@ -6,19 +6,16 @@ from os.path import realpath
 from pathlib import Path
 from typing import List, Literal, Mapping, Optional, Sized, Tuple
 
-from ethereum_test_base_types import AccessList, Address, BlobSchedule, Bytes, ForkBlobSchedule
+from ethereum_test_base_types import (AccessList, Address, BlobSchedule, Bytes,
+                                      ForkBlobSchedule)
 from ethereum_test_base_types.conversions import BytesConvertible
 from ethereum_test_vm import EVMCodeType, Opcodes
 
-from ..base_fork import (
-    BaseFork,
-    BlobGasPriceCalculator,
-    CalldataGasCalculator,
-    ExcessBlobGasCalculator,
-    MemoryExpansionGasCalculator,
-    TransactionDataFloorCostCalculator,
-    TransactionIntrinsicCostCalculator,
-)
+from ..base_fork import (BaseFork, BlobGasPriceCalculator,
+                         CalldataGasCalculator, ExcessBlobGasCalculator,
+                         MemoryExpansionGasCalculator,
+                         TransactionDataFloorCostCalculator,
+                         TransactionIntrinsicCostCalculator)
 from ..gas_costs import GasCosts
 from .helpers import ceiling_division, fake_exponential
 
@@ -1121,7 +1118,8 @@ class Cancun(Shanghai):
                 "5ffd5b62001fff42064281555f359062001fff015500",
             }
         }
-        return new_allocation | super(Cancun, cls).pre_allocation_blockchain()  # type: ignore
+        # return new_allocation | super(Cancun, cls).pre_allocation_blockchain()  # type: ignore
+        return new_allocation
 
     @classmethod
     def engine_new_payload_version(

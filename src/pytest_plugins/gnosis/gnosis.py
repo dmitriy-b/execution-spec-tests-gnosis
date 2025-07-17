@@ -67,7 +67,7 @@ def set_gnosis_fork_parameters(
     _gnosis_max_blobs_per_block = max_blobs_per_block
 
 
-class Gnosis(Cancun, blockchain_test_network_name="gnosis"):
+class Gnosis(Cancun):
     """Gnosis chain fork class.
     
     Currently based on Cancun fork with Gnosis-specific parameters.
@@ -79,12 +79,12 @@ class Gnosis(Cancun, blockchain_test_network_name="gnosis"):
         """Return the name of the fork."""
         return "Gnosis"
     
-    @classmethod
-    def blockchain_test_network_name(cls) -> str:
-        """Return the network name for blockchain tests."""
-        if cls._blockchain_test_network_name is not None:
-            return cls._blockchain_test_network_name
-        return "gnosis"
+    # @classmethod
+    # def blockchain_test_network_name(cls) -> str:
+    #     """Return the network name for blockchain tests."""
+    #     if cls._blockchain_test_network_name is not None:
+    #         return cls._blockchain_test_network_name
+    #     return "gnosis"
     
     @classmethod
     def is_deployed(cls) -> bool:
