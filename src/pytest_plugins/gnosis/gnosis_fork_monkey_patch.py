@@ -140,8 +140,9 @@ def patch_fork_parameters() -> None:
                     gnosis_allocation.update(GNOSIS_PRE_ALLOCATED_ACCOUNTS)
                     
                     # Merge allocations (Gnosis accounts override original ones)
-                    return original_allocation | gnosis_allocation
-                
+                    # return original_allocation | gnosis_allocation
+                    return gnosis_allocation
+                # Return the patched pre-allocation method
                 return classmethod(patched_pre_allocation)
             
             setattr(fork_class, 'pre_allocation_blockchain', create_patched_pre_allocation(original_method))
