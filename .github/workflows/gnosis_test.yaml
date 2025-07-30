@@ -35,7 +35,7 @@ jobs:
           sleep 10  # Give Hive time to start
 
       - name: Wait for Hive to listen on port 3000
-        uses: itcaat/check-port@v1
+        uses: nrukavkov/open-ports-check-action@v1
         with:
           host: '127.0.0.1'
           port: '3000'
