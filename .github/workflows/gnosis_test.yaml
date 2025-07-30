@@ -43,6 +43,10 @@ jobs:
           uv run solc-select use 0.8.24 --always-install
 
       - name: Run fill
-        run: |
-          uv run fill ./tests/gnosis/test_gnosis_blockchain.py --fork Prague --clean -c pytest-gnosis.ini --gnosis
+        run: uv run fill ./tests/gnosis/test_gnosis_blockchain.py --fork Prague --clean -c pytest-gnosis.ini --gnosis
+
+      - name: Run test against Geth
+        env:
+          HIVE_SIMULATOR: http://127.0.0.1:3000
+        run: uv run consume engine -v --input fixtures/blockchain_tests_engine/gnosis/gnosis_blockchain
 
