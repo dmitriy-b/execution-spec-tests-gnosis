@@ -55,3 +55,10 @@ jobs:
           HIVE_SIMULATOR: http://127.0.0.1:3000
         run: uv run consume engine -v --input fixtures/blockchain_tests_engine/gnosis/gnosis_blockchain
 
+      - name: Upload Hive logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hive-log
+          path: hive.log
+
