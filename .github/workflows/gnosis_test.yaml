@@ -26,7 +26,12 @@ jobs:
 
       - name: Start Hive in background
         run: |
-          nohup ~/go/bin/hive > hive.log 2>&1 &
+          ./hive --dev --client go-ethereum-gnosis \
+            --dev.addr=127.0.0.1:3000 \
+            --sim.loglevel=3 \
+            --docker.output \
+            --docker.pull > hive.log 2>&1 &
+          sleep 10  # Give Hive time to start
 
       - name: Install uv
         run: |
