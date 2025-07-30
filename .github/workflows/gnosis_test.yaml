@@ -26,12 +26,21 @@ jobs:
 
       - name: Start Hive in background
         run: |
+          cd hive
           ~/go/bin/hive --dev --client go-ethereum-gnosis \
             --dev.addr=127.0.0.1:3000 \
             --sim.loglevel=3 \
             --docker.output \
             --docker.pull > hive.log 2>&1 &
           sleep 10  # Give Hive time to start
+
+       - name: Wait for Hive to listen on port 3000
+         uses: itcaat/check-port@v1
+         with:
+           host: '127.0.0.1'
+           port: '3000'
+           pause: '2000'     # milliseconds pause between attempts
+           needFail: 'true'  # fail if port doesn't open in time
 
       - name: Install uv
         run: |
