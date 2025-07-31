@@ -25,11 +25,6 @@ jobs:
           go install ./...
           cd ..
 
-      - name: Setup environment
-        run: |
-          sudo fuser -k 3000/tcp || true # Free port 3000 if in use
-          sleep 2
-
       - name: Start Hive in background
         run: |
           cd hive
