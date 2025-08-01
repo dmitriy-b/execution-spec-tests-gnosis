@@ -39,7 +39,7 @@ jobs:
         run: npm install -g wait-on
       
       - name: Wait for Hive to listen on port 3000
-        run: npx wait-on --timeout 10000 tcp:127.0.0.1:3000
+        run: npx wait-on --timeout 20000 tcp:127.0.0.1:3000
   
       - name: Install uv
         run: |
