@@ -97,7 +97,7 @@ class BaseTest(BaseModel):
         """Create a test in a different format from a base test."""
         new_instance = cls(
             tag=base_test.tag,
-            t8n_dump_dir=base_test.t8n_dump_dir,
+            # t8n_dump_dir=base_test.t8n_dump_dir,
             **kwargs,
         )
         new_instance._request = base_test._request

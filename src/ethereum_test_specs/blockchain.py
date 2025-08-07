@@ -2,64 +2,35 @@
 
 import warnings
 from pprint import pprint
-from typing import Any, Callable, ClassVar, Dict, Generator, List, Optional, Sequence, Tuple, Type
+from typing import (Any, Callable, ClassVar, Dict, Generator, List, Optional,
+                    Sequence, Tuple, Type)
 
 import pytest
 from pydantic import ConfigDict, Field, field_validator
 
 from ethereum_clis import BlockExceptionWithMessage, Result, TransitionTool
-from ethereum_test_base_types import (
-    Address,
-    Bloom,
-    Bytes,
-    CamelModel,
-    Hash,
-    HeaderNonce,
-    HexNumber,
-    Number,
-)
-from ethereum_test_exceptions import (
-    BlockException,
-    EngineAPIError,
-    ExceptionWithMessage,
-    TransactionException,
-    UndefinedException,
-)
-from ethereum_test_execution import (
-    BaseExecute,
-    ExecuteFormat,
-    LabeledExecuteFormat,
-    TransactionPost,
-)
-from ethereum_test_fixtures import (
-    BaseFixture,
-    BlockchainEngineFixture,
-    BlockchainEngineXFixture,
-    BlockchainFixture,
-    FixtureFormat,
-    LabeledFixtureFormat,
-)
-from ethereum_test_fixtures.blockchain import (
-    FixtureBlock,
-    FixtureBlockBase,
-    FixtureConfig,
-    FixtureEngineNewPayload,
-    FixtureHeader,
-    FixtureTransaction,
-    FixtureWithdrawal,
-    InvalidFixtureBlock,
-)
+from ethereum_test_base_types import (Address, Bloom, Bytes, CamelModel, Hash,
+                                      HeaderNonce, HexNumber, Number)
+from ethereum_test_exceptions import (BlockException, EngineAPIError,
+                                      ExceptionWithMessage,
+                                      TransactionException, UndefinedException)
+from ethereum_test_execution import (BaseExecute, ExecuteFormat,
+                                     LabeledExecuteFormat, TransactionPost)
+from ethereum_test_fixtures import (BaseFixture, BlockchainEngineFixture,
+                                    BlockchainEngineXFixture,
+                                    BlockchainFixture, FixtureFormat,
+                                    LabeledFixtureFormat)
+from ethereum_test_fixtures.blockchain import (FixtureBlock, FixtureBlockBase,
+                                               FixtureConfig,
+                                               FixtureEngineNewPayload,
+                                               FixtureHeader,
+                                               FixtureTransaction,
+                                               FixtureWithdrawal,
+                                               InvalidFixtureBlock)
 from ethereum_test_fixtures.common import FixtureBlobSchedule
 from ethereum_test_forks import Fork
-from ethereum_test_types import (
-    Alloc,
-    Environment,
-    Removable,
-    Requests,
-    Transaction,
-    TransactionDefaults,
-    Withdrawal,
-)
+from ethereum_test_types import (Alloc, Environment, Removable, Requests,
+                                 Transaction, TransactionDefaults, Withdrawal)
 
 from .base import BaseTest, verify_result
 from .debugging import print_traces
@@ -491,8 +462,6 @@ class BlockchainTest(BaseTest):
                     f"{self.node_id()} uses a high Transaction gas_limit: {tx.gas_limit}",
                     stacklevel=2,
                 )
-
-            txs.append(tx.with_signature_and_sender())
 
         if failing_tx_count := len([tx for tx in txs if tx.error]) > 0:
             if failing_tx_count > 1:

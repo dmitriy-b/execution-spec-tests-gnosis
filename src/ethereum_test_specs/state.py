@@ -16,12 +16,7 @@ from ethereum_test_execution import (
     LabeledExecuteFormat,
     TransactionPost,
 )
-from ethereum_test_fixtures import (
-    BaseFixture,
-    FixtureFormat,
-    LabeledFixtureFormat,
-    StateFixture,
-)
+from ethereum_test_fixtures import BaseFixture, FixtureFormat, LabeledFixtureFormat, StateFixture
 from ethereum_test_fixtures.common import FixtureBlobSchedule
 from ethereum_test_fixtures.state import (
     FixtureConfig,
@@ -154,7 +149,7 @@ class StateTest(BaseTest):
             genesis_environment=self._generate_blockchain_genesis_environment(fork=fork),
             pre=self.pre,
             post=self.post,
-            blocks=self._generate_blockchain_blocks(),
+            blocks=self._generate_blockchain_blocks(fork=fork),
             t8n_dump_dir=self.t8n_dump_dir,
             chain_id=self.chain_id,
         )
