@@ -37,10 +37,10 @@ def set_custom_fork_parameters(
     - patch_pre_allocation: Whether to patch pre_allocation_blockchain method to include Gnosis accounts
     """
     global _custom_fork_params, _patch_pre_allocation
-    
+
     _custom_fork_params = {}
     _patch_pre_allocation = patch_pre_allocation
-    
+
     if blob_base_fee_update_fraction is not None:
         _custom_fork_params['blob_base_fee_update_fraction'] = blob_base_fee_update_fraction
     if target_blobs_per_block is not None:
@@ -71,32 +71,40 @@ def patch_fork_parameters() -> None:
     """Monkey patch all fork classes to use custom parameters when available."""
     # Import here to avoid circular imports
     from ethereum_test_forks import get_forks
-    
+
     if not _custom_fork_params and not _patch_pre_allocation:
         return  # No custom parameters to apply
-    
+
     print(f"🔧 Patching fork parameters: {_custom_fork_params}, pre_allocation: {_patch_pre_allocation}")
-    
+
     # Get all available forks
     forks = get_forks()
-    
+
     for fork_class in forks:
         # Store original methods if not already stored
         if fork_class not in _original_fork_methods:
             _original_fork_methods[fork_class] = {}
-            
+
             # Store original methods
-            if hasattr(fork_class, 'blob_base_fee_update_fraction'):
-                _original_fork_methods[fork_class]['blob_base_fee_update_fraction'] = fork_class.blob_base_fee_update_fraction
-            if hasattr(fork_class, 'target_blobs_per_block'):
-                _original_fork_methods[fork_class]['target_blobs_per_block'] = fork_class.target_blobs_per_block
-            if hasattr(fork_class, 'max_blobs_per_block'):
-                _original_fork_methods[fork_class]['max_blobs_per_block'] = fork_class.max_blobs_per_block
-            if hasattr(fork_class, 'pre_allocation_blockchain'):
-                _original_fork_methods[fork_class]['pre_allocation_blockchain'] = fork_class.pre_allocation_blockchain
-        
+            if hasattr(fork_class, "blob_base_fee_update_fraction"):
+                _original_fork_methods[fork_class]["blob_base_fee_update_fraction"] = (
+                    fork_class.blob_base_fee_update_fraction
+                )
+            if hasattr(fork_class, "target_blobs_per_block"):
+                _original_fork_methods[fork_class]["target_blobs_per_block"] = (
+                    fork_class.target_blobs_per_block
+                )
+            if hasattr(fork_class, "max_blobs_per_block"):
+                _original_fork_methods[fork_class]["max_blobs_per_block"] = (
+                    fork_class.max_blobs_per_block
+                )
+            if hasattr(fork_class, "pre_allocation_blockchain"):
+                _original_fork_methods[fork_class]["pre_allocation_blockchain"] = (
+                    fork_class.pre_allocation_blockchain
+                )
+
         # Skip blob parameter patching if this fork doesn't support blobs
-        patch_blob_params = _custom_fork_params and hasattr(fork_class, 'supports_blobs')
+        patch_blob_params = _custom_fork_params and hasattr(fork_class, "supports_blobs")
         if patch_blob_params:
             try:
                 # Check if fork supports blobs at all
@@ -104,47 +112,85 @@ def patch_fork_parameters() -> None:
                     patch_blob_params = False
             except (NotImplementedError, AttributeError):
                 patch_blob_params = False
-        
+
         # Patch blob_base_fee_update_fraction if specified
-        if patch_blob_params and 'blob_base_fee_update_fraction' in _custom_fork_params:
-            custom_value = _custom_fork_params['blob_base_fee_update_fraction']
-            setattr(fork_class, 'blob_base_fee_update_fraction', 
-                   classmethod(lambda cls, block_number=0, timestamp=0, value=custom_value: value))
-        
+        if patch_blob_params and "blob_base_fee_update_fraction" in _custom_fork_params:
+            custom_value = _custom_fork_params["blob_base_fee_update_fraction"]
+            setattr(
+                fork_class,
+                "blob_base_fee_update_fraction",
+                classmethod(lambda cls, block_number=0, timestamp=0, value=custom_value: value),
+            )
+
         # Patch target_blobs_per_block if specified
         if patch_blob_params and 'target_blobs_per_block' in _custom_fork_params:
             custom_value = _custom_fork_params['target_blobs_per_block']
             setattr(fork_class, 'target_blobs_per_block',
                    classmethod(lambda cls, block_number=0, timestamp=0, value=custom_value: value))
-        
+
         # Patch max_blobs_per_block if specified
-        if patch_blob_params and 'max_blobs_per_block' in _custom_fork_params:
-            custom_value = _custom_fork_params['max_blobs_per_block']
-            setattr(fork_class, 'max_blobs_per_block',
-                   classmethod(lambda cls, block_number=0, timestamp=0, value=custom_value: value))
-        
+        if patch_blob_params and "max_blobs_per_block" in _custom_fork_params:
+            custom_value = _custom_fork_params["max_blobs_per_block"]
+            setattr(
+                fork_class,
+                "max_blobs_per_block",
+                classmethod(lambda cls, block_number=0, timestamp=0, value=custom_value: value),
+            )
+
         # Patch pre_allocation_blockchain if requested
-        if _patch_pre_allocation and hasattr(fork_class, 'pre_allocation_blockchain'):
-            original_method = _original_fork_methods[fork_class]['pre_allocation_blockchain']
-            
+        if _patch_pre_allocation and hasattr(fork_class, "pre_allocation_blockchain"):
+            original_method = _original_fork_methods[fork_class]["pre_allocation_blockchain"]
+
             def create_patched_pre_allocation(original_pre_allocation):
                 def patched_pre_allocation(cls) -> Mapping:
                     """Return pre-allocation with Gnosis accounts added."""
                     # Get original allocation
                     original_allocation = dict(original_pre_allocation())
-                    
+
                     # Add Gnosis allocations
                     gnosis_allocation = {}
                     gnosis_allocation.update(GNOSIS_CHAIN_ACCOUNTS)
                     gnosis_allocation.update(GNOSIS_SYSTEM_CONTRACTS)
                     gnosis_allocation.update(GNOSIS_PRE_ALLOCATED_ACCOUNTS)
-                    
+
                     # Merge allocations (Gnosis accounts override original ones)
                     return original_allocation | gnosis_allocation
-                
+
+                # Return the patched pre-allocation method
                 return classmethod(patched_pre_allocation)
-            
-            setattr(fork_class, 'pre_allocation_blockchain', create_patched_pre_allocation(original_method))
-        
+
+            setattr(
+                fork_class,
+                "pre_allocation_blockchain",
+                create_patched_pre_allocation(original_method),
+            )
+
+        # Also patch pre_allocation method since state tests use that
+        if _patch_pre_allocation and hasattr(fork_class, "pre_allocation"):
+            if "pre_allocation" not in _original_fork_methods[fork_class]:
+                _original_fork_methods[fork_class]["pre_allocation"] = fork_class.pre_allocation
+
+            original_method = _original_fork_methods[fork_class]["pre_allocation"]
+
+            def create_patched_pre_allocation_2(original_pre_allocation):
+                def patched_pre_allocation(cls) -> Mapping:
+                    """Return pre-allocation with Gnosis accounts added."""
+                    # Get original allocation
+                    original_allocation = dict(original_pre_allocation())
+
+                    # Add Gnosis allocations
+                    gnosis_allocation = {}
+                    # gnosis_allocation.update(GNOSIS_CHAIN_ACCOUNTS)
+                    # gnosis_allocation.update(GNOSIS_SYSTEM_CONTRACTS)
+                    gnosis_allocation.update(GNOSIS_PRE_ALLOCATED_ACCOUNTS)
+
+                    # Merge allocations (Gnosis accounts override original ones)
+                    return original_allocation | gnosis_allocation
+
+                # Return the patched pre-allocation method
+                return classmethod(patched_pre_allocation)
+
+            setattr(fork_class, "pre_allocation", create_patched_pre_allocation_2(original_method))
+
         print(f"  ✓ Patched {fork_class.__name__}")
 
